@@ -1,24 +1,109 @@
-<!-- XART Arknights-inspired effects -->
+<!-- XART Liquid Glass + Arknights effects -->
 <style>
 /* 粒子画布 */
 #xart-particles {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     pointer-events: none;
     z-index: -1;
     opacity: 0.3;
 }
 
+/* 背景轮播 */
+#xart-bg-slideshow {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -2;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 1.5s ease;
+}
+#xart-bg-slideshow::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.15);
+}
+
+/* Apple 液态玻璃 */
+.liquid-glass,
+.ui.segment,
+.ui.attached.segment,
+.repository .repo-header,
+.dashboard .secondary-nav,
+.ui.card,
+.ui.cards > .card,
+.page-content .markup,
+#navbar {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 暗色主题液态玻璃调整 */
+[data-theme*="dark"] .liquid-glass,
+[data-theme*="dark"] .ui.segment,
+[data-theme*="dark"] .ui.attached.segment,
+[data-theme*="dark"] .ui.card,
+[data-theme*="dark"] .ui.cards > .card,
+[data-theme*="dark"] #navbar {
+    background: rgba(0, 0, 0, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+/* 液态玻璃高光 */
+.ui.segment::before,
+.ui.card::before,
+#navbar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    right: 0; height: 1px;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.4),
+        transparent);
+    border-radius: 16px 16px 0 0;
+    pointer-events: none;
+}
+
+/* 导航栏透明 */
+#navbar {
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
+}
+
+/* 输入框玻璃效果 */
+.ui.input > input,
+.ui.form textarea,
+.ui.form input {
+    background: rgba(255,255,255,0.06) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+}
+
+/* 按钮液态玻璃 */
+.ui.primary.button {
+    backdrop-filter: blur(8px) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 16px rgba(31,38,135,0.2) !important;
+}
+
 /* 扫描线 */
 .xart-scanline {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
     background: linear-gradient(90deg, transparent, rgba(0,180,255,0.6), transparent);
     z-index: 9998;
     pointer-events: none;
@@ -30,7 +115,7 @@
     100% { top: 100vh; }
 }
 
-/* 文字故障效果 - 仓库名hover */
+/* 文字故障效果 */
 .repository-item .repo-title a:hover,
 .dashboard-repos .item a.name:hover,
 a.muted:hover {
@@ -40,7 +125,7 @@ a.muted:hover {
     0% { transform: translate(0); }
     20% { transform: translate(-2px, 1px); text-shadow: 2px 0 #ff0040, -2px 0 #00ffea; }
     40% { transform: translate(2px, -1px); text-shadow: -2px 0 #ff0040, 2px 0 #00ffea; }
-    60% { transform: translate(-1px, 2px); text-shadow: 1px 0 #ff0040, -1px 0 #00ffea; }
+    60% { transform: translate(-1px, 2px); }
     80% { transform: translate(1px, -2px); }
     100% { transform: translate(0); text-shadow: none; }
 }
@@ -59,11 +144,10 @@ a.muted:hover {
     100% { width: 60px; height: 60px; opacity: 0; margin-top: -30px; margin-left: -30px; }
 }
 
-/* 页面加载进度条 */
+/* 加载进度条 */
 #xart-loader {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     height: 2px;
     background: linear-gradient(90deg, #00b4ff, #00ffea, #ff0040);
     z-index: 10000;
@@ -71,15 +155,8 @@ a.muted:hover {
     box-shadow: 0 0 8px rgba(0,180,255,0.8);
 }
 
-/* 雪花容器 */
-#snowfall-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-    overflow: hidden;
+/* 页面整体 */
+body {
+    background-color: #0a0a0f !important;
 }
 </style>

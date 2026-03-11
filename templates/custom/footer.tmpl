@@ -1,57 +1,74 @@
-<!-- XART Arknights-inspired enhancements for Gitea 1.25.4 -->
+<!-- XART Liquid Glass + Arknights enhancements -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 (function() {
-    // === 粒子连线系统 (Arknights风) ===
+    // === 背景轮播 ===
+    var bgImages = [
+        '/assets/img/bg/73984979.jpg',
+        '/assets/img/bg/73024750.jpg',
+        '/assets/img/bg/75188095.jpg',
+        '/assets/img/bg/74932889.jpg',
+        '/assets/img/bg/69602151.jpg',
+        '/assets/img/bg/65409886.jpg',
+        '/assets/img/bg/64337772.jpg',
+        '/assets/img/bg/0.jpg',
+        '/assets/img/bg/1.jpg'
+    ];
+    function initSlideshow() {
+        var el = document.getElementById('xart-bg-slideshow');
+        if (!el) return;
+        var idx = Math.floor(Math.random() * bgImages.length);
+        el.style.backgroundImage = "url('" + bgImages[idx] + "')";
+        // 用户自定义背景优先
+        var custom = localStorage.getItem('backgroundImage');
+        if (custom) { el.style.backgroundImage = "url('" + custom + "')"; return; }
+        setInterval(function() {
+            idx = (idx + 1) % bgImages.length;
+            el.style.opacity = '0';
+            setTimeout(function() {
+                el.style.backgroundImage = "url('" + bgImages[idx] + "')";
+                el.style.opacity = '1';
+            }, 1500);
+        }, 15000);
+    }
+
+    // === 粒子连线 ===
     function initParticles() {
         var canvas = document.getElementById('xart-particles');
         if (!canvas) return;
         var ctx = canvas.getContext('2d');
         var particles = [];
-        var maxP = 60;
+        var maxP = 50;
         var linkDist = 120;
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         resize();
         window.addEventListener('resize', resize);
-
         for (var i = 0; i < maxP; i++) {
             particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 0.5,
-                vy: (Math.random() - 0.5) * 0.5,
-                r: Math.random() * 2 + 1
+                x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
+                r: Math.random()*1.5+0.5
             });
         }
-
         function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (var i = 0; i < particles.length; i++) {
-                var p = particles[i];
-                p.x += p.vx; p.y += p.vy;
-                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            for (var i=0;i<particles.length;i++) {
+                var p=particles[i];
+                p.x+=p.vx; p.y+=p.vy;
+                if(p.x<0||p.x>canvas.width) p.vx*=-1;
+                if(p.y<0||p.y>canvas.height) p.vy*=-1;
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0,180,255,0.5)';
+                ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+                ctx.fillStyle='rgba(0,180,255,0.4)';
                 ctx.fill();
-
-                for (var j = i + 1; j < particles.length; j++) {
-                    var p2 = particles[j];
-                    var dx = p.x - p2.x, dy = p.y - p2.y;
-                    var dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < linkDist) {
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.strokeStyle = 'rgba(0,180,255,' + (1 - dist / linkDist) * 0.3 + ')';
-                        ctx.lineWidth = 0.5;
-                        ctx.stroke();
+                for(var j=i+1;j<particles.length;j++){
+                    var p2=particles[j];
+                    var dx=p.x-p2.x,dy=p.y-p2.y;
+                    var dist=Math.sqrt(dx*dx+dy*dy);
+                    if(dist<linkDist){
+                        ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p2.x,p2.y);
+                        ctx.strokeStyle='rgba(0,180,255,'+(1-dist/linkDist)*0.2+')';
+                        ctx.lineWidth=0.5;ctx.stroke();
                     }
                 }
             }
@@ -60,101 +77,90 @@
         draw();
     }
 
-    // === 鼠标点击涟漪 ===
+    // === 点击涟漪 ===
     function initRipple() {
         document.addEventListener('click', function(e) {
-            var r = document.createElement('div');
-            r.className = 'xart-ripple';
-            r.style.left = e.clientX + 'px';
-            r.style.top = e.clientY + 'px';
+            var r=document.createElement('div');
+            r.className='xart-ripple';
+            r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
             document.body.appendChild(r);
-            setTimeout(function() { r.remove(); }, 600);
+            setTimeout(function(){r.remove();},600);
         });
     }
 
-    // === 页面加载进度条 ===
+    // === 加载进度条 ===
     function initLoader() {
-        var bar = document.getElementById('xart-loader');
-        if (!bar) return;
-        var progress = 0;
-        var timer = setInterval(function() {
-            progress += Math.random() * 20 + 5;
-            if (progress >= 90) { clearInterval(timer); progress = 90; }
-            bar.style.width = progress + '%';
-        }, 100);
-        window.addEventListener('load', function() {
-            bar.style.width = '100%';
-            setTimeout(function() { bar.style.opacity = '0'; }, 300);
-            setTimeout(function() { bar.remove(); }, 600);
+        var bar=document.getElementById('xart-loader');
+        if(!bar)return;
+        var p=0;
+        var t=setInterval(function(){
+            p+=Math.random()*20+5;
+            if(p>=90){clearInterval(t);p=90;}
+            bar.style.width=p+'%';
+        },100);
+        window.addEventListener('load',function(){
+            bar.style.width='100%';
+            setTimeout(function(){bar.style.opacity='0';},300);
+            setTimeout(function(){bar.remove();},600);
         });
     }
 
-    // === 代码块macOS标签 ===
+    // === 代码块标签 ===
     function loadTab() {
-        var rootStyles = getComputedStyle(document.documentElement);
-        var themeValue = rootStyles.getPropertyValue('--liteyuki-theme').trim();
-        if (themeValue !== 'liteyuki-magipoke') return;
-        document.querySelectorAll('pre.code-block').forEach(function(pre) {
-            if (pre.querySelector('.code-tab')) return;
-            var tab = document.createElement('div');
-            tab.className = 'code-tab';
-            tab.innerHTML = '<div class="code-tab-item" style="display:flex;justify-content:flex-start;"><div class="code-tab-dot" style="background-color:#ff5f56;"></div><div class="code-tab-dot" style="background-color:#ffbd2e;"></div><div class="code-tab-dot" style="background-color:#27c93f;"></div></div>';
+        var s=getComputedStyle(document.documentElement);
+        if(s.getPropertyValue('--liteyuki-theme').trim()!=='liteyuki-magipoke')return;
+        document.querySelectorAll('pre.code-block').forEach(function(pre){
+            if(pre.querySelector('.code-tab'))return;
+            var tab=document.createElement('div');tab.className='code-tab';
+            tab.innerHTML='<div class="code-tab-item" style="display:flex"><div class="code-tab-dot" style="background:#ff5f56"></div><div class="code-tab-dot" style="background:#ffbd2e"></div><div class="code-tab-dot" style="background:#27c93f"></div></div>';
             pre.prepend(tab);
         });
     }
 
     // === 段落圆角 ===
     function loadSegmentEnd() {
-        var notList = ['.text.center', '.issue-content-right'];
-        document.querySelectorAll('.ui.segment').forEach(function(seg) {
-            if (!seg.nextElementSibling || !seg.nextElementSibling.matches('.ui.segment') || notList.some(function(s){return seg.nextElementSibling.matches(s);})) {
+        document.querySelectorAll('.ui.segment').forEach(function(seg){
+            if(!seg.nextElementSibling||!seg.nextElementSibling.matches('.ui.segment'))
                 seg.classList.add('segment-end');
-            }
         });
     }
 
-    // === 背景图切换 ===
-    function initBgSwitcher() {
-        var stored = localStorage.getItem('backgroundImage');
-        if (stored) document.body.style.backgroundImage = "url('" + stored + "')";
-    }
-
-    // === 自定义footer ===
+    // === footer信息 ===
     function initCustomFooter() {
-        var footer = document.querySelector('footer');
-        if (!footer) return;
-        var infoDiv = document.createElement('div');
-        infoDiv.style.cssText = 'text-align:center;font-size:0.8rem;padding:8px 0;opacity:0.8;';
-        infoDiv.innerHTML = '<p>节点: XART-NAS</p><p>你来自: <span id="xart-geo">定位中...</span></p><p>轻雪数据中心提供支持</p>';
-        footer.appendChild(infoDiv);
-        fetch('https://ipapi.co/json/', {signal: AbortSignal.timeout(3000)})
+        var footer=document.querySelector('footer');
+        if(!footer)return;
+        var d=document.createElement('div');
+        d.style.cssText='text-align:center;font-size:0.8rem;padding:8px 0;opacity:0.7;';
+        d.innerHTML='<p>节点: XART-NAS // <span id="xart-geo">定位中...</span></p><p>Art by <a href="https://www.pixiv.net/users/12845810" target="_blank" style="opacity:0.7">焦茶</a> | 轻雪数据中心提供支持</p>';
+        footer.appendChild(d);
+        fetch('https://ipapi.co/json/',{signal:AbortSignal.timeout(3000)})
             .then(function(r){return r.json()})
-            .then(function(d){
-                var el = document.getElementById('xart-geo');
-                if(el) el.textContent = (d.country_name||'') + ' ' + (d.region||'') + ' ' + (d.city||'');
-            })
-            .catch(function(){
-                var el = document.getElementById('xart-geo');
-                if(el) el.textContent = '未知';
-            });
+            .then(function(j){var e=document.getElementById('xart-geo');if(e)e.textContent=(j.country_name||'')+ ' '+(j.city||'');})
+            .catch(function(){var e=document.getElementById('xart-geo');if(e)e.textContent='未知';});
     }
 
     // === 动态标题 ===
     function initDynamicTitle() {
-        var origTitle = document.title;
-        document.addEventListener('visibilitychange', function() {
-            document.title = document.hidden ? '// SIGNAL LOST...' : origTitle;
+        var orig=document.title;
+        document.addEventListener('visibilitychange',function(){
+            document.title=document.hidden?'// SIGNAL LOST...':orig;
         });
+    }
+
+    // === 预加载背景图 ===
+    function preloadBg() {
+        bgImages.forEach(function(src){var img=new Image();img.src=src;});
     }
 
     // === 初始化 ===
     initLoader();
     window.addEventListener('DOMContentLoaded', function() {
+        initSlideshow();
+        preloadBg();
         initParticles();
         initRipple();
         loadTab();
         loadSegmentEnd();
-        initBgSwitcher();
         initCustomFooter();
         initDynamicTitle();
     });
