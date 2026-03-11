@@ -1,5 +1,77 @@
-<!-- Liteyuki custom styles -->
+<!-- XART Arknights-inspired effects -->
 <style>
+/* 粒子画布 */
+#xart-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+/* 扫描线 */
+.xart-scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0,180,255,0.6), transparent);
+    z-index: 9998;
+    pointer-events: none;
+    animation: xart-scan 8s linear infinite;
+    opacity: 0.4;
+}
+@keyframes xart-scan {
+    0% { top: -2px; }
+    100% { top: 100vh; }
+}
+
+/* 文字故障效果 - 仓库名hover */
+.repository-item .repo-title a:hover,
+.dashboard-repos .item a.name:hover,
+a.muted:hover {
+    animation: xart-glitch 0.3s ease;
+}
+@keyframes xart-glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 1px); text-shadow: 2px 0 #ff0040, -2px 0 #00ffea; }
+    40% { transform: translate(2px, -1px); text-shadow: -2px 0 #ff0040, 2px 0 #00ffea; }
+    60% { transform: translate(-1px, 2px); text-shadow: 1px 0 #ff0040, -1px 0 #00ffea; }
+    80% { transform: translate(1px, -2px); }
+    100% { transform: translate(0); text-shadow: none; }
+}
+
+/* 鼠标点击涟漪 */
+.xart-ripple {
+    position: fixed;
+    border: 2px solid rgba(0,180,255,0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    animation: xart-ripple-expand 0.6s ease-out forwards;
+}
+@keyframes xart-ripple-expand {
+    0% { width: 0; height: 0; opacity: 1; }
+    100% { width: 60px; height: 60px; opacity: 0; margin-top: -30px; margin-left: -30px; }
+}
+
+/* 页面加载进度条 */
+#xart-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #00b4ff, #00ffea, #ff0040);
+    z-index: 10000;
+    transition: width 0.3s;
+    box-shadow: 0 0 8px rgba(0,180,255,0.8);
+}
+
+/* 雪花容器 */
 #snowfall-container {
     position: fixed;
     top: 0;
@@ -9,18 +81,5 @@
     pointer-events: none;
     z-index: 9999;
     overflow: hidden;
-}
-.snowflake {
-    position: absolute;
-    top: -10px;
-    color: white;
-    user-select: none;
-    pointer-events: none;
-    animation-name: fall;
-    animation-timing-function: linear;
-    animation-iteration-count: 1;
-}
-@keyframes fall {
-    to { transform: translateY(100vh); opacity: 0; }
 }
 </style>

@@ -1,7 +1,95 @@
-<!-- Liteyuki enhancements for Gitea 1.25.4 -->
+<!-- XART Arknights-inspired enhancements for Gitea 1.25.4 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 (function() {
+    // === 粒子连线系统 (Arknights风) ===
+    function initParticles() {
+        var canvas = document.getElementById('xart-particles');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var particles = [];
+        var maxP = 60;
+        var linkDist = 120;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        for (var i = 0; i < maxP; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                r: Math.random() * 2 + 1
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (var i = 0; i < particles.length; i++) {
+                var p = particles[i];
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0,180,255,0.5)';
+                ctx.fill();
+
+                for (var j = i + 1; j < particles.length; j++) {
+                    var p2 = particles[j];
+                    var dx = p.x - p2.x, dy = p.y - p2.y;
+                    var dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < linkDist) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = 'rgba(0,180,255,' + (1 - dist / linkDist) * 0.3 + ')';
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(draw);
+        }
+        draw();
+    }
+
+    // === 鼠标点击涟漪 ===
+    function initRipple() {
+        document.addEventListener('click', function(e) {
+            var r = document.createElement('div');
+            r.className = 'xart-ripple';
+            r.style.left = e.clientX + 'px';
+            r.style.top = e.clientY + 'px';
+            document.body.appendChild(r);
+            setTimeout(function() { r.remove(); }, 600);
+        });
+    }
+
+    // === 页面加载进度条 ===
+    function initLoader() {
+        var bar = document.getElementById('xart-loader');
+        if (!bar) return;
+        var progress = 0;
+        var timer = setInterval(function() {
+            progress += Math.random() * 20 + 5;
+            if (progress >= 90) { clearInterval(timer); progress = 90; }
+            bar.style.width = progress + '%';
+        }, 100);
+        window.addEventListener('load', function() {
+            bar.style.width = '100%';
+            setTimeout(function() { bar.style.opacity = '0'; }, 300);
+            setTimeout(function() { bar.remove(); }, 600);
+        });
+    }
+
+    // === 代码块macOS标签 ===
     function loadTab() {
         var rootStyles = getComputedStyle(document.documentElement);
         var themeValue = rootStyles.getPropertyValue('--liteyuki-theme').trim();
@@ -13,24 +101,9 @@
             tab.innerHTML = '<div class="code-tab-item" style="display:flex;justify-content:flex-start;"><div class="code-tab-dot" style="background-color:#ff5f56;"></div><div class="code-tab-dot" style="background-color:#ffbd2e;"></div><div class="code-tab-dot" style="background-color:#27c93f;"></div></div>';
             pre.prepend(tab);
         });
-        document.querySelectorAll('pre.code-block code').forEach(function(code) {
-            if (code.parentElement.querySelector('.code-shot')) return;
-            var button = document.createElement('button');
-            button.style.right = '4rem';
-            button.className = 'code-copy code-shot ui button';
-            button.innerHTML = '<svg t="1730818009069" class="svg octicon-copy" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path d="M511.7 614.7l-66.2 66.2a170.7 170.7 0 1 1-60.5-60.2l66.3-66.4-178.5-178.5 60.4-60.4 178.5 178.6 178.7-178.7 60.3 60.3-178.8 178.8 66.7 66.5a170.7 170.7 0 1 1-60.3 60.3l-66.6-66.5zM298.7 853.3a85.3 85.3 0 1 0 0-170.6 85.3 85.3 0 0 0 0 170.6zm426.6 0a85.3 85.3 0 1 0 0-170.6 85.3 85.3 0 0 0 0 170.6zm85.4-298.6V213.3H213.3v341.4H128V170.7a42.7 42.7 0 0 1 42.7-42.7h682.6a42.7 42.7 0 0 1 42.7 42.7v384h-85.3z" fill="#fff"></path></svg>';
-            button.addEventListener('click', function() {
-                html2canvas(code.parentElement, {scale:2}).then(function(canvas) {
-                    var link = document.createElement('a');
-                    link.href = canvas.toDataURL('image/png');
-                    link.download = 'screenshot-' + (code.parentElement.id||'code') + '-' + Date.now() + '.png';
-                    link.click();
-                });
-            });
-            code.after(button);
-        });
     }
 
+    // === 段落圆角 ===
     function loadSegmentEnd() {
         var notList = ['.text.center', '.issue-content-right'];
         document.querySelectorAll('.ui.segment').forEach(function(seg) {
@@ -40,17 +113,51 @@
         });
     }
 
+    // === 背景图切换 ===
     function initBgSwitcher() {
         var stored = localStorage.getItem('backgroundImage');
         if (stored) document.body.style.backgroundImage = "url('" + stored + "')";
     }
 
+    // === 自定义footer ===
+    function initCustomFooter() {
+        var footer = document.querySelector('footer');
+        if (!footer) return;
+        var infoDiv = document.createElement('div');
+        infoDiv.style.cssText = 'text-align:center;font-size:0.8rem;padding:8px 0;opacity:0.8;';
+        infoDiv.innerHTML = '<p>节点: XART-NAS</p><p>你来自: <span id="xart-geo">定位中...</span></p><p>轻雪数据中心提供支持</p>';
+        footer.appendChild(infoDiv);
+        fetch('https://ipapi.co/json/', {signal: AbortSignal.timeout(3000)})
+            .then(function(r){return r.json()})
+            .then(function(d){
+                var el = document.getElementById('xart-geo');
+                if(el) el.textContent = (d.country_name||'') + ' ' + (d.region||'') + ' ' + (d.city||'');
+            })
+            .catch(function(){
+                var el = document.getElementById('xart-geo');
+                if(el) el.textContent = '未知';
+            });
+    }
+
+    // === 动态标题 ===
+    function initDynamicTitle() {
+        var origTitle = document.title;
+        document.addEventListener('visibilitychange', function() {
+            document.title = document.hidden ? '// SIGNAL LOST...' : origTitle;
+        });
+    }
+
+    // === 初始化 ===
+    initLoader();
     window.addEventListener('DOMContentLoaded', function() {
+        initParticles();
+        initRipple();
         loadTab();
         loadSegmentEnd();
         initBgSwitcher();
+        initCustomFooter();
+        initDynamicTitle();
     });
 })();
 </script>
-<script src="https://cdn.liteyuki.icu/js/liteyuki_footer.js"></script>
 <script src="https://fastly.jsdelivr.net/npm/live2d-widgets@0/autoload.js"></script>
