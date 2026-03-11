@@ -152,12 +152,18 @@
         bgImages.forEach(function(src){var img=new Image();img.src=src;});
     }
 
+    // === 页面检测 ===
+    var isLoginPage = /^\/(user\/(login|sign_up|forgot_password)|)$/.test(window.location.pathname);
+    if (isLoginPage) document.body.classList.add('xart-login-page');
+
     // === 初始化 ===
     initLoader();
     window.addEventListener('DOMContentLoaded', function() {
-        initSlideshow();
-        preloadBg();
-        initParticles();
+        if (isLoginPage) {
+            initSlideshow();
+            preloadBg();
+            initParticles();
+        }
         initRipple();
         loadTab();
         loadSegmentEnd();

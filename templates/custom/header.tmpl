@@ -10,7 +10,7 @@
     opacity: 0.3;
 }
 
-/* 背景轮播 */
+/* 背景轮播 — 仅登录页显示 */
 #xart-bg-slideshow {
     position: fixed;
     top: 0; left: 0;
@@ -19,6 +19,12 @@
     background-size: cover;
     background-position: center;
     transition: opacity 1.5s ease;
+    display: none;
+}
+body.xart-login-page #xart-bg-slideshow {
+    display: block;
+    filter: blur(6px) brightness(0.65);
+    transform: scale(1.05);
 }
 #xart-bg-slideshow::after {
     content: '';
@@ -155,8 +161,19 @@ a.muted:hover {
     box-shadow: 0 0 8px rgba(0,180,255,0.8);
 }
 
-/* 页面整体 */
-body {
+/* 页面整体 — 登录页深色背景，内页跟随主题 */
+body.xart-login-page {
     background-color: #0a0a0f !important;
+}
+
+/* 登录页粒子更亮 */
+body.xart-login-page #xart-particles {
+    opacity: 0.5;
+}
+
+/* 内页隐藏粒子和扫描线 */
+body:not(.xart-login-page) #xart-particles,
+body:not(.xart-login-page) .xart-scanline {
+    display: none;
 }
 </style>
