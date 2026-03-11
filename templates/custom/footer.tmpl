@@ -1,0 +1,56 @@
+<!-- Liteyuki enhancements for Gitea 1.25.4 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function() {
+    function loadTab() {
+        var rootStyles = getComputedStyle(document.documentElement);
+        var themeValue = rootStyles.getPropertyValue('--liteyuki-theme').trim();
+        if (themeValue !== 'liteyuki-magipoke') return;
+        document.querySelectorAll('pre.code-block').forEach(function(pre) {
+            if (pre.querySelector('.code-tab')) return;
+            var tab = document.createElement('div');
+            tab.className = 'code-tab';
+            tab.innerHTML = '<div class="code-tab-item" style="display:flex;justify-content:flex-start;"><div class="code-tab-dot" style="background-color:#ff5f56;"></div><div class="code-tab-dot" style="background-color:#ffbd2e;"></div><div class="code-tab-dot" style="background-color:#27c93f;"></div></div>';
+            pre.prepend(tab);
+        });
+        document.querySelectorAll('pre.code-block code').forEach(function(code) {
+            if (code.parentElement.querySelector('.code-shot')) return;
+            var button = document.createElement('button');
+            button.style.right = '4rem';
+            button.className = 'code-copy code-shot ui button';
+            button.innerHTML = '<svg t="1730818009069" class="svg octicon-copy" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path d="M511.7 614.7l-66.2 66.2a170.7 170.7 0 1 1-60.5-60.2l66.3-66.4-178.5-178.5 60.4-60.4 178.5 178.6 178.7-178.7 60.3 60.3-178.8 178.8 66.7 66.5a170.7 170.7 0 1 1-60.3 60.3l-66.6-66.5zM298.7 853.3a85.3 85.3 0 1 0 0-170.6 85.3 85.3 0 0 0 0 170.6zm426.6 0a85.3 85.3 0 1 0 0-170.6 85.3 85.3 0 0 0 0 170.6zm85.4-298.6V213.3H213.3v341.4H128V170.7a42.7 42.7 0 0 1 42.7-42.7h682.6a42.7 42.7 0 0 1 42.7 42.7v384h-85.3z" fill="#fff"></path></svg>';
+            button.addEventListener('click', function() {
+                html2canvas(code.parentElement, {scale:2}).then(function(canvas) {
+                    var link = document.createElement('a');
+                    link.href = canvas.toDataURL('image/png');
+                    link.download = 'screenshot-' + (code.parentElement.id||'code') + '-' + Date.now() + '.png';
+                    link.click();
+                });
+            });
+            code.after(button);
+        });
+    }
+
+    function loadSegmentEnd() {
+        var notList = ['.text.center', '.issue-content-right'];
+        document.querySelectorAll('.ui.segment').forEach(function(seg) {
+            if (!seg.nextElementSibling || !seg.nextElementSibling.matches('.ui.segment') || notList.some(function(s){return seg.nextElementSibling.matches(s);})) {
+                seg.classList.add('segment-end');
+            }
+        });
+    }
+
+    function initBgSwitcher() {
+        var stored = localStorage.getItem('backgroundImage');
+        if (stored) document.body.style.backgroundImage = "url('" + stored + "')";
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        loadTab();
+        loadSegmentEnd();
+        initBgSwitcher();
+    });
+})();
+</script>
+<script src="https://cdn.liteyuki.icu/js/liteyuki_footer.js"></script>
+<script src="https://fastly.jsdelivr.net/npm/live2d-widgets@0/autoload.js"></script>

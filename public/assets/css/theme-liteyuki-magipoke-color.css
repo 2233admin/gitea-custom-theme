@@ -1,0 +1,610 @@
+:root {
+    --is-dark-theme: false !important;
+    /* 背景与文本颜色 */
+    --code-background: #282c34 !important;
+    /* One Dark Pro Italic Vivid 背景色 */
+    --code-color: #c5c5c5 !important;
+    /* One Dark Pro 文本色 */
+
+    /* 错误及高亮 */
+    --code-err-background: #e06c75 !important;
+    --code-err-color: #1e0010 !important;
+    --code-hl-background: #3E4451 !important;
+
+    /* 关键字颜色 */
+    --code-k-color: #c678dd !important;
+    --code-kc-color: #c678dd !important;
+    --code-kd-color: #c678dd !important;
+    --code-kn-color: #c678dd !important;
+    --code-kp-color: #c678dd !important;
+    --code-kr-color: #c678dd !important;
+    --code-kt-color: #c678dd !important;
+
+    /* 变量与常量颜色 */
+    --code-na-color: #38bdf8 !important;
+    --code-nc-color: #38bdf8 !important;
+    --code-no-color: #38bdf8 !important;
+    --code-nd-color: #38bdf8 !important;
+    --code-ne-color: #38bdf8 !important;
+    --code-nf-color: #38bdf8 !important;
+    --code-nx-color: #38bdf8 !important;
+
+    /* 类型名称颜色 */
+    --code-nt-color: #e06c75 !important;
+
+    /* 字符串与注释颜色 */
+    --code-s-color: #4ade80 !important;
+    --code-sa-color: #4ade80 !important;
+    --code-sb-color: #4ade80 !important;
+    --code-sc-color: #4ade80 !important;
+    --code-dl-color: #4ade80 !important;
+    --code-sd-color: #4ade80 !important;
+    --code-s2-color: #4ade80 !important;
+    --code-se-color: #ae81ff !important;
+    --code-sh-color: #4ade80 !important;
+    --code-si-color: #4ade80 !important;
+    --code-sx-color: #4ade80 !important;
+    --code-sr-color: #4ade80 !important;
+    --code-s1-color: #4ade80 !important;
+    --code-ss-color: #4ade80 !important;
+
+    /* 数字与符号颜色 */
+    --code-l-color: #ae81ff !important;
+    --code-ld-color: #e6db74 !important;
+    --code-m-color: #ae81ff !important;
+    --code-mb-color: #ae81ff !important;
+    --code-mf-color: #ae81ff !important;
+    --code-mh-color: #ae81ff !important;
+    --code-mi-color: #ae81ff !important;
+
+    /* 操作符颜色 */
+    --code-o-color: #eee !important;
+    --code-ow-color: #eee !important;
+
+    /* 注释颜色 */
+    --code-c-color: #888 !important;
+    --code-ch-color: #888 !important;
+    --code-cm-color: #888 !important;
+    --code-c1-color: #888 !important;
+    --code-cs-color: #888 !important;
+    --code-cp-color: #888 !important;
+    --code-cpf-color: #888 !important;
+
+    /* 全局变量与函数颜色 */
+    --code-gd-color: #e06c75 !important;
+    --code-gi-color: #a6e22e !important;
+    --code-gu-color: #56b6c2 !important;
+
+    /* 界面文本颜色 */
+    /* 一些提示颜色 */
+    --color-green: #4ade80 !important;
+    --color-red: #f87171 !important;
+    --color-purple: #c678dd !important;
+    --color-blue: #61afef !important;
+    --color-orange: #d19a66 !important;
+    --color-yellow: #e5c07b !important;
+    --color-olive: #4ade80 !important;
+    --color-green: #4ade80 !important;
+    --color-teal: #56b6c2 !important;
+    --color-cyan: #56b6c2 !important;
+    --color-indigo: #61afef !important;
+    --color-blue: #61afef !important;
+    --color-violet: #c678dd !important;
+    --color-purple: #c678dd !important;
+    --color-pink: #c678dd !important;
+    --color-brown: #d19a66 !important;
+    /* --color-grey: #888;
+    --color-light: #ccc;
+    --color-light-2: #ddd;
+    --color-light-3: #eee; */
+    --color-light-grey: #888 !important;
+    --color-gold: #e5c07b !important;
+    --color-silver: #abb2bf !important;
+    --color-fuchsia: #c678dd !important;
+    --color-aqua: #56b6c2 !important;
+    --color-khaki: #d19a66 !important;
+    --color-plum: #c678dd !important;
+    --color-crimson: #f87171 !important;
+    --color-coral: #f87171 !important;
+    --color-turquoise: #56b6c2 !important;
+    --color-amber: #e5c07b !important;
+    --color-lavender: #c678dd !important;
+    --color-peach: #d19a66 !important;
+    --color-mint: #4ade80 !important;
+    --color-sand: #d19a66 !important;
+    --color-rose: #f87171 !important;
+    --color-cream: #e5c07b !important;
+    --color-chocolate: #d19a66 !important;
+    --color-coffee: #d19a66 !important;
+    --color-eggplant: #c678dd !important;
+    --color-fern: #4ade80 !important;
+    --color-iris: #61afef !important;
+    --color-jade: #56b6c2 !important;
+    --color-lilac: #c678dd !important;
+    --color-mango: #e5c07b !important;
+    --color-nectarine: #d19a66 !important;
+    --color-orchid: #c678dd !important;
+    --color-periwinkle: #61afef !important;
+    --color-quartz: #abb2bf !important;
+    --color-ruby: #f87171 !important;
+    --color-sapphire: #61afef !important;
+    --color-tangerine: #d19a66 !important;
+    --color-umber: #d19a66 !important;
+    --color-vanilla: #e5c07b !important;
+    --color-wheat: #d19a66 !important;
+    --color-xanthic: #e5c07b !important;
+    --color-yam: #d19a66 !important;
+    --color-zucchini: #4ade80 !important;
+}
+
+:root {
+    color-scheme: light;
+    --is-dark-theme: false;
+    --color-primary: #1e66f5;
+    --color-primary-hover: #3677f6;
+    --color-primary-dark-1: #0f5cf4;
+    --color-primary-dark-2: #0a55ea;
+    --color-primary-dark-3: #0a50db;
+    --color-primary-dark-4: #094bcd;
+    --color-primary-dark-5: #0845be;
+    --color-primary-dark-6: #0840af;
+    --color-primary-dark-7: #073ba1;
+    --color-primary-light-1: #2d70f6;
+    --color-primary-light-2: #3b7af6;
+    --color-primary-light-3: #4a84f7;
+    --color-primary-light-4: #598ef8;
+    --color-primary-light-5: #6798f8;
+    --color-primary-light-6: #76a2f9;
+    --color-primary-light-7: #85acfa;
+    --color-primary-alpha-10: rgba(30, 102, 245, 0.1);
+    --color-primary-alpha-20: rgba(30, 102, 245, 0.2);
+    --color-primary-alpha-30: rgba(30, 102, 245, 0.3);
+    --color-primary-alpha-40: rgba(30, 102, 245, 0.4);
+    --color-primary-alpha-50: rgba(30, 102, 245, 0.5);
+    --color-primary-alpha-60: rgba(30, 102, 245, 0.6);
+    --color-primary-alpha-70: rgba(30, 102, 245, 0.7);
+    --color-primary-alpha-80: rgba(30, 102, 245, 0.8);
+    --color-primary-alpha-90: rgba(30, 102, 245, 0.9);
+}
+
+.text.primary {
+    color: rgb(var(--accent-color)) !important;
+}
+
+.text.red {
+    color: var(--color-red) !important;
+}
+
+.text.orange {
+    color: var(--color-orange) !important;
+}
+
+.text.yellow {
+    color: var(--color-yellow) !important;
+}
+
+.text.olive {
+    color: var(--color-olive) !important;
+}
+
+.text.green {
+    color: var(--color-green) !important;
+}
+
+.text.teal {
+    color: var(--color-teal) !important;
+}
+
+.text.blue {
+    color: var(--color-blue) !important;
+}
+
+.text.violet {
+    color: var(--color-violet) !important;
+}
+
+.text.purple {
+    color: var(--color-purple) !important;
+}
+
+.text.pink {
+    color: var(--color-pink) !important;
+}
+
+.text.brown {
+    color: var(--color-brown) !important;
+}
+
+.text.black {
+    color: var(--color-text) !important;
+}
+
+.text.grey,
+.text.light {
+    color: var(--color-text-light) !important;
+}
+
+.text.light-2 {
+    color: var(--color-text-light-2) !important;
+}
+
+.text.light-3 {
+    color: var(--color-text-light-3) !important;
+}
+
+.text.light.grey {
+    color: var(--color-grey-light) !important;
+}
+
+.text.gold {
+    color: var(--color-gold) !important;
+}
+
+/* 其他颜色类 */
+.text.indigo {
+    color: var(--color-indigo) !important;
+}
+
+.text.cyan {
+    color: var(--color-cyan) !important;
+}
+
+.text.lime {
+    color: var(--color-lime) !important;
+}
+
+.text.maroon {
+    color: var(--color-maroon) !important;
+}
+
+.text.navy {
+    color: var(--color-navy) !important;
+}
+
+.text.silver {
+    color: var(--color-silver) !important;
+}
+
+.text.fuchsia {
+    color: var(--color-fuchsia) !important;
+}
+
+.text.aqua {
+    color: var(--color-aqua) !important;
+}
+
+.text.khaki {
+    color: var(--color-khaki) !important;
+}
+
+.text.plum {
+    color: var(--color-plum) !important;
+}
+
+.text.crimson {
+    color: var(--color-crimson) !important;
+}
+
+.text.coral {
+    color: var(--color-coral) !important;
+}
+
+.text.turquoise {
+    color: var(--color-turquoise) !important;
+}
+
+.text.amber {
+    color: var(--color-amber) !important;
+}
+
+.text.lavender {
+    color: var(--color-lavender) !important;
+}
+
+.text.peach {
+    color: var(--color-peach) !important;
+}
+
+.text.mint {
+    color: var(--color-mint) !important;
+}
+
+.text.sand {
+    color: var(--color-sand) !important;
+}
+
+.text.rose {
+    color: var(--color-rose) !important;
+}
+
+.text.cream {
+    color: var(--color-cream) !important;
+}
+
+.text.chocolate {
+    color: var(--color-chocolate) !important;
+}
+
+.text.coffee {
+    color: var(--color-coffee) !important;
+}
+
+.text.eggplant {
+    color: var(--color-eggplant) !important;
+}
+
+.text.fern {
+    color: var(--color-fern) !important;
+}
+
+.text.iris {
+    color: var(--color-iris) !important;
+}
+
+.text.jade {
+    color: var(--color-jade) !important;
+}
+
+.text.lilac {
+    color: var(--color-lilac) !important;
+}
+
+.text.mango {
+    color: var(--color-mango) !important;
+}
+
+.text.nectarine {
+    color: var(--color-nectarine) !important;
+}
+
+.text.orchid {
+    color: var(--color-orchid) !important;
+}
+
+.text.periwinkle {
+    color: var(--color-periwinkle) !important;
+}
+
+.text.quartz {
+    color: var(--color-quartz) !important;
+}
+
+.text.ruby {
+    color: var(--color-ruby) !important;
+}
+
+.text.sapphire {
+    color: var(--color-sapphire) !important;
+}
+
+.text.tangerine {
+    color: var(--color-tangerine) !important;
+}
+
+.text.umber {
+    color: var(--color-umber) !important;
+}
+
+.text.vanilla {
+    color: var(--color-vanilla) !important;
+}
+
+.text.wheat {
+    color: var(--color-wheat) !important;
+}
+
+.text.xanthic {
+    color: var(--color-xanthic) !important;
+}
+
+.text.yam {
+    color: var(--color-yam) !important;
+}
+
+.text.zucchini {
+    color: var(--color-zucchini) !important;
+}
+
+.ui.green.label {
+    background-color: var(--color-green) !important;
+}
+
+.ui.red.label {
+    background-color: var(--color-red) !important;
+}
+
+.ui.purple.label {
+    background-color: var(--color-purple) !important;
+}
+
+.ui.blue.label {
+    background-color: var(--color-blue) !important;
+}
+
+.ui.orange.label {
+    background-color: var(--color-orange) !important;
+}
+
+.ui.yellow.label {
+    background-color: var(--color-yellow) !important;
+}
+
+.ui.olive.label {
+    background-color: var(--color-olive) !important;
+}
+
+.ui.teal.label {
+    background-color: var(--color-teal) !important;
+}
+
+.ui.cyan.label {
+    background-color: var(--color-cyan) !important;
+}
+
+.ui.indigo.label {
+    background-color: var(--color-indigo) !important;
+}
+
+.ui.violet.label {
+    background-color: var(--color-violet) !important;
+}
+
+.ui.pink.label {
+    background-color: var(--color-pink) !important;
+}
+
+.ui.brown.label {
+    background-color: var(--color-brown) !important;
+}
+
+.ui.light-grey.label {
+    background-color: var(--color-light-grey) !important;
+}
+
+.ui.gold.label {
+    background-color: var(--color-gold) !important;
+}
+
+.ui.silver.label {
+    background-color: var(--color-silver) !important;
+}
+
+.ui.fuchsia.label {
+    background-color: var(--color-fuchsia) !important;
+}
+
+.ui.aqua.label {
+    background-color: var(--color-aqua) !important;
+}
+
+.ui.khaki.label {
+    background-color: var(--color-khaki) !important;
+}
+
+.ui.plum.label {
+    background-color: var(--color-plum) !important;
+}
+
+.ui.crimson.label {
+    background-color: var(--color-crimson) !important;
+}
+
+.ui.coral.label {
+    background-color: var(--color-coral) !important;
+}
+
+.ui.turquoise.label {
+    background-color: var(--color-turquoise) !important;
+}
+
+.ui.amber.label {
+    background-color: var(--color-amber) !important;
+}
+
+.ui.lavender.label {
+    background-color: var(--color-lavender) !important;
+}
+
+.ui.peach.label {
+    background-color: var(--color-peach) !important;
+}
+
+.ui.mint.label {
+    background-color: var(--color-mint) !important;
+}
+
+.ui.sand.label {
+    background-color: var(--color-sand) !important;
+}
+
+.ui.rose.label {
+    background-color: var(--color-rose) !important;
+}
+
+.ui.cream.label {
+    background-color: var(--color-cream) !important;
+}
+
+.ui.chocolate.label {
+    background-color: var(--color-chocolate) !important;
+}
+
+.ui.coffee.label {
+    background-color: var(--color-coffee) !important;
+}
+
+.ui.eggplant.label {
+    background-color: var(--color-eggplant) !important;
+}
+
+.ui.fern.label {
+    background-color: var(--color-fern) !important;
+}
+
+.ui.iris.label {
+    background-color: var(--color-iris) !important;
+}
+
+.ui.jade.label {
+    background-color: var(--color-jade) !important;
+}
+
+.ui.lilac.label {
+    background-color: var(--color-lilac) !important;
+}
+
+.ui.mango.label {
+    background-color: var(--color-mango) !important;
+}
+
+.ui.nectarine.label {
+    background-color: var(--color-nectarine) !important;
+}
+
+.ui.orchid.label {
+    background-color: var(--color-orchid) !important;
+}
+
+.ui.periwinkle.label {
+    background-color: var(--color-periwinkle) !important;
+}
+
+.ui.quartz.label {
+    background-color: var(--color-quartz) !important;
+}
+
+.ui.ruby.label {
+    background-color: var(--color-ruby) !important;
+}
+
+.ui.sapphire.label {
+    background-color: var(--color-sapphire) !important;
+}
+
+.ui.tangerine.label {
+    background-color: var(--color-tangerine) !important;
+}
+
+.ui.umber.label {
+    background-color: var(--color-umber) !important;
+}
+
+.ui.vanilla.label {
+    background-color: var(--color-vanilla) !important;
+}
+
+.ui.wheat.label {
+    background-color: var(--color-wheat) !important;
+}
+
+.ui.xanthic.label {
+    background-color: var(--color-xanthic) !important;
+}
+
+.ui.yam.label {
+    background-color: var(--color-yam) !important;
+}
+
+.ui.zucchini.label {
+    background-color: var(--color-zucchini) !important;
+}
