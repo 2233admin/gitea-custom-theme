@@ -1,8 +1,6 @@
-<!-- XART Liquid Glass + Arknights enhancements -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- XART effects — v4 -->
 <script>
 (function() {
-    // === 背景轮播 ===
     var bgImages = [
         '/assets/img/bg/73984979.jpg',
         '/assets/img/bg/73024750.jpg',
@@ -14,14 +12,17 @@
         '/assets/img/bg/0.jpg',
         '/assets/img/bg/1.jpg'
     ];
+
+    // 检测登录页并加 class
+    var p = window.location.pathname;
+    var isLogin = (p === '/' || p === '/user/login' || p === '/user/sign_up' || p === '/user/forgot_password');
+    if (isLogin) document.body.classList.add('xart-login-page');
+
     function initSlideshow() {
         var el = document.getElementById('xart-bg-slideshow');
         if (!el) return;
         var idx = Math.floor(Math.random() * bgImages.length);
         el.style.backgroundImage = "url('" + bgImages[idx] + "')";
-        // 用户自定义背景优先
-        var custom = localStorage.getItem('backgroundImage');
-        if (custom) { el.style.backgroundImage = "url('" + custom + "')"; return; }
         setInterval(function() {
             idx = (idx + 1) % bgImages.length;
             el.style.opacity = '0';
@@ -32,144 +33,583 @@
         }, 15000);
     }
 
-    // === 粒子连线 ===
     function initParticles() {
         var canvas = document.getElementById('xart-particles');
         if (!canvas) return;
         var ctx = canvas.getContext('2d');
-        var particles = [];
-        var maxP = 50;
-        var linkDist = 120;
+        var ps = [], max = 50, link = 120;
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        resize();
-        window.addEventListener('resize', resize);
-        for (var i = 0; i < maxP; i++) {
-            particles.push({
-                x: Math.random()*canvas.width, y: Math.random()*canvas.height,
-                vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
-                r: Math.random()*1.5+0.5
-            });
+        resize(); window.addEventListener('resize', resize);
+        for (var i = 0; i < max; i++) {
+            ps.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                       vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
+                       r: Math.random()*1.5+0.5 });
         }
-        function draw() {
+        (function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            for (var i=0;i<particles.length;i++) {
-                var p=particles[i];
-                p.x+=p.vx; p.y+=p.vy;
+            for (var i=0;i<ps.length;i++) {
+                var p=ps[i]; p.x+=p.vx; p.y+=p.vy;
                 if(p.x<0||p.x>canvas.width) p.vx*=-1;
                 if(p.y<0||p.y>canvas.height) p.vy*=-1;
-                ctx.beginPath();
-                ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-                ctx.fillStyle='rgba(0,180,255,0.4)';
-                ctx.fill();
-                for(var j=i+1;j<particles.length;j++){
-                    var p2=particles[j];
-                    var dx=p.x-p2.x,dy=p.y-p2.y;
-                    var dist=Math.sqrt(dx*dx+dy*dy);
-                    if(dist<linkDist){
-                        ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p2.x,p2.y);
-                        ctx.strokeStyle='rgba(0,180,255,'+(1-dist/linkDist)*0.2+')';
-                        ctx.lineWidth=0.5;ctx.stroke();
-                    }
+                ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+                ctx.fillStyle='rgba(0,180,255,0.4)'; ctx.fill();
+                for(var j=i+1;j<ps.length;j++){
+                    var q=ps[j], dx=p.x-q.x, dy=p.y-q.y, d=Math.sqrt(dx*dx+dy*dy);
+                    if(d<link){ ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+                        ctx.strokeStyle='rgba(0,180,255,'+(1-d/link)*0.2+')';
+                        ctx.lineWidth=0.5; ctx.stroke(); }
                 }
             }
             requestAnimationFrame(draw);
-        }
-        draw();
+        })();
     }
 
-    // === 点击涟漪 ===
     function initRipple() {
         document.addEventListener('click', function(e) {
-            var r=document.createElement('div');
-            r.className='xart-ripple';
-            r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
+            var r = document.createElement('div');
+            r.className = 'xart-ripple';
+            r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
             document.body.appendChild(r);
-            setTimeout(function(){r.remove();},600);
+            setTimeout(function(){ r.remove(); }, 600);
         });
     }
 
-    // === 加载进度条 ===
     function initLoader() {
-        var bar=document.getElementById('xart-loader');
-        if(!bar)return;
-        var p=0;
-        var t=setInterval(function(){
-            p+=Math.random()*20+5;
-            if(p>=90){clearInterval(t);p=90;}
-            bar.style.width=p+'%';
-        },100);
-        window.addEventListener('load',function(){
+        var bar = document.getElementById('xart-loader');
+        if (!bar) return;
+        var p = 0, t = setInterval(function() {
+            p += Math.random()*20+5; if(p>=90){clearInterval(t);p=90;} bar.style.width=p+'%';
+        }, 100);
+        window.addEventListener('load', function() {
             bar.style.width='100%';
             setTimeout(function(){bar.style.opacity='0';},300);
             setTimeout(function(){bar.remove();},600);
         });
     }
 
-    // === 代码块标签 ===
-    function loadTab() {
-        var s=getComputedStyle(document.documentElement);
-        if(s.getPropertyValue('--liteyuki-theme').trim()!=='liteyuki-magipoke')return;
-        document.querySelectorAll('pre.code-block').forEach(function(pre){
-            if(pre.querySelector('.code-tab'))return;
-            var tab=document.createElement('div');tab.className='code-tab';
-            tab.innerHTML='<div class="code-tab-item" style="display:flex"><div class="code-tab-dot" style="background:#ff5f56"></div><div class="code-tab-dot" style="background:#ffbd2e"></div><div class="code-tab-dot" style="background:#27c93f"></div></div>';
-            pre.prepend(tab);
+    function initTitle() {
+        var orig = document.title;
+        document.addEventListener('visibilitychange', function() {
+            document.title = document.hidden ? '// SIGNAL LOST...' : orig;
         });
     }
-
-    // === 段落圆角 ===
-    function loadSegmentEnd() {
-        document.querySelectorAll('.ui.segment').forEach(function(seg){
-            if(!seg.nextElementSibling||!seg.nextElementSibling.matches('.ui.segment'))
-                seg.classList.add('segment-end');
-        });
-    }
-
-    // === footer信息 ===
-    function initCustomFooter() {
-        var footer=document.querySelector('footer');
-        if(!footer)return;
-        var d=document.createElement('div');
-        d.style.cssText='text-align:center;font-size:0.8rem;padding:8px 0;opacity:0.7;';
-        d.innerHTML='<p>节点: XART-NAS // <span id="xart-geo">定位中...</span></p><p>Art by <a href="https://www.pixiv.net/users/12845810" target="_blank" style="opacity:0.7">焦茶</a> | 轻雪数据中心提供支持</p>';
-        footer.appendChild(d);
-        fetch('https://ipapi.co/json/',{signal:AbortSignal.timeout(3000)})
-            .then(function(r){return r.json()})
-            .then(function(j){var e=document.getElementById('xart-geo');if(e)e.textContent=(j.country_name||'')+ ' '+(j.city||'');})
-            .catch(function(){var e=document.getElementById('xart-geo');if(e)e.textContent='未知';});
-    }
-
-    // === 动态标题 ===
-    function initDynamicTitle() {
-        var orig=document.title;
-        document.addEventListener('visibilitychange',function(){
-            document.title=document.hidden?'// SIGNAL LOST...':orig;
-        });
-    }
-
-    // === 预加载背景图 ===
-    function preloadBg() {
-        bgImages.forEach(function(src){var img=new Image();img.src=src;});
-    }
-
-    // === 页面检测 ===
-    var isLoginPage = /^\/(user\/(login|sign_up|forgot_password)|)$/.test(window.location.pathname);
-    if (isLoginPage) document.body.classList.add('xart-login-page');
 
     // === 初始化 ===
     initLoader();
-    window.addEventListener('DOMContentLoaded', function() {
-        if (isLoginPage) {
-            initSlideshow();
-            preloadBg();
-            initParticles();
+
+    if (isLogin) {
+        initSlideshow();
+        initParticles();
+        bgImages.forEach(function(s){ var img=new Image(); img.src=s; });
+    }
+
+    initRipple();
+    initTitle();
+})();
+</script>
+<!-- XART Frontend Enhancement v1 — 2026-03-28 -->
+<style>
+/* === [1] 首页公告栏 === */
+#xart-announce {
+    background: linear-gradient(135deg, rgba(0,180,255,0.12), rgba(0,255,234,0.08));
+    border: 1px solid rgba(0,180,255,0.2);
+    border-radius: 10px; padding: 12px 20px; margin: 12px 0;
+    display: flex; align-items: center; gap: 12px;
+    backdrop-filter: blur(8px); font-size: 0.9rem;
+}
+#xart-announce .badge {
+    background: linear-gradient(135deg, #00b4ff, #00ffea);
+    color: #000; font-weight: 700; font-size: 0.75rem;
+    padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+    text-transform: uppercase; letter-spacing: 1px;
+}
+#xart-announce .msg { color: var(--color-text); flex: 1; }
+#xart-announce .dismiss {
+    cursor: pointer; opacity: 0.5; font-size: 1.2em;
+    transition: opacity 0.2s;
+}
+#xart-announce .dismiss:hover { opacity: 1; }
+
+/* === [2] Repo 统计卡片 === */
+#xart-repo-stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px; margin: 16px 0;
+}
+.xart-stat-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 14px; text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+}
+.xart-stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,180,255,0.3);
+}
+.xart-stat-card .num {
+    font-size: 1.8rem; font-weight: 800;
+    background: linear-gradient(135deg, #00b4ff, #00ffea);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.xart-stat-card .label {
+    font-size: 0.75rem; opacity: 0.6; margin-top: 4px;
+    text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* === [3] 快捷操作浮球 === */
+#xart-fab {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9990;
+}
+#xart-fab .fab-btn {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, #00b4ff, #0066ff);
+    border: none; color: #fff; font-size: 1.4rem;
+    cursor: pointer; box-shadow: 0 4px 20px rgba(0,100,255,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex; align-items: center; justify-content: center;
+}
+#xart-fab .fab-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 28px rgba(0,100,255,0.6);
+}
+#xart-fab .fab-menu {
+    position: absolute; bottom: 60px; right: 0;
+    background: rgba(20,20,30,0.95);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 8px 0;
+    min-width: 180px; display: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+#xart-fab .fab-menu.open { display: block; }
+#xart-fab .fab-menu a {
+    display: block; padding: 8px 16px; color: rgba(255,255,255,0.85);
+    text-decoration: none; font-size: 0.85rem; transition: background 0.15s;
+}
+#xart-fab .fab-menu a:hover {
+    background: rgba(0,180,255,0.15);
+}
+#xart-fab .fab-menu a .icon { margin-right: 8px; width: 16px; display: inline-block; text-align: center; }
+
+/* === [4] Explore 页热门标签 === */
+#xart-hot-topics {
+    display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0;
+}
+.xart-topic-tag {
+    background: rgba(0,180,255,0.1);
+    border: 1px solid rgba(0,180,255,0.2);
+    border-radius: 20px; padding: 4px 14px;
+    font-size: 0.8rem; color: #00b4ff;
+    cursor: pointer; transition: all 0.2s;
+    text-decoration: none;
+}
+.xart-topic-tag:hover {
+    background: rgba(0,180,255,0.25);
+    border-color: rgba(0,180,255,0.5);
+    color: #00ffea;
+}
+
+/* === [5] Repo 页活跃度指示条 === */
+.xart-activity-bar {
+    height: 3px; border-radius: 2px; margin-top: 4px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+}
+.xart-activity-bar .fill {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, #00b4ff, #00ffea);
+    transition: width 0.6s ease;
+}
+
+/* === [6] 键盘快捷键提示 === */
+#xart-shortcuts-modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); z-index: 99999;
+    align-items: center; justify-content: center;
+}
+#xart-shortcuts-modal.open { display: flex; }
+#xart-shortcuts-modal .modal-content {
+    background: rgba(20,20,30,0.95); backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+    padding: 24px 32px; max-width: 480px; width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+#xart-shortcuts-modal h3 { margin: 0 0 16px; color: #00b4ff; font-size: 1.1rem; }
+#xart-shortcuts-modal .shortcut-row {
+    display: flex; justify-content: space-between; padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.85rem;
+}
+#xart-shortcuts-modal kbd {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px; padding: 2px 8px; font-family: monospace;
+    font-size: 0.8rem; color: #00ffea;
+}
+
+/* === [7] 时间人性化 === */
+.xart-time-ago { font-variant-numeric: tabular-nums; }
+</style>
+
+<script>
+(function() {
+    'use strict';
+    var GITEA_URL = window.location.origin;
+    var p = window.location.pathname;
+
+    // ─── [1] 首页公告栏 ───
+    function injectAnnounce() {
+        if (p !== '/' && !p.startsWith('/explore')) return;
+        var container = document.querySelector('.page-content .ui.container') ||
+                        document.querySelector('.page-content');
+        if (!container) return;
+        if (sessionStorage.getItem('xart-dismiss-announce')) return;
+
+        var div = document.createElement('div');
+        div.id = 'xart-announce';
+        div.innerHTML = '<span class="badge">NEW</span>' +
+            '<span class="msg">CI Runner 已上线 — push 即触发 Actions | 评论 <code>/help</code> 查看 bot 命令 | <code>git push</code> 到不存在的 repo 自动创建</span>' +
+            '<span class="dismiss" onclick="this.parentElement.remove();sessionStorage.setItem(\'xart-dismiss-announce\',1)">✕</span>';
+        container.insertBefore(div, container.firstChild);
+    }
+
+    // ─── [2] Repo 统计卡片 (仅首页) ───
+    function injectRepoStats() {
+        if (p !== '/') return;
+        var announce = document.getElementById('xart-announce');
+        var container = announce ? announce.parentElement : document.querySelector('.page-content .ui.container');
+        if (!container) return;
+
+        fetch(GITEA_URL + '/api/v1/repos/search?limit=50&sort=updated', {
+            headers: { 'Accept': 'application/json' }
+        }).then(function(r){ return r.json(); }).then(function(d) {
+            var repos = (d.data || d || []);
+            var total = repos.length;
+            var totalSize = 0, totalStars = 0, totalIssues = 0;
+            repos.forEach(function(r) {
+                totalSize += (r.size || 0);
+                totalStars += (r.stars_count || 0);
+                totalIssues += (r.open_issues_count || 0);
+            });
+            var sizeMB = (totalSize / 1024).toFixed(0);
+
+            var div = document.createElement('div');
+            div.id = 'xart-repo-stats';
+            div.innerHTML =
+                '<div class="xart-stat-card"><div class="num">' + total + '</div><div class="label">Repos</div></div>' +
+                '<div class="xart-stat-card"><div class="num">' + sizeMB + 'M</div><div class="label">Total Size</div></div>' +
+                '<div class="xart-stat-card"><div class="num">' + totalStars + '</div><div class="label">Stars</div></div>' +
+                '<div class="xart-stat-card"><div class="num">' + totalIssues + '</div><div class="label">Open Issues</div></div>';
+
+            var ref = announce || container.firstChild;
+            if (ref && ref.nextSibling) {
+                container.insertBefore(div, ref.nextSibling);
+            } else {
+                container.appendChild(div);
+            }
+        }).catch(function(){});
+    }
+
+    // ─── [3] 快捷操作浮球 (FAB) ───
+    function injectFAB() {
+        var fab = document.createElement('div');
+        fab.id = 'xart-fab';
+        fab.innerHTML =
+            '<div class="fab-menu">' +
+            '  <a href="/repo/create"><span class="icon">+</span>新建仓库</a>' +
+            '  <a href="/explore/repos"><span class="icon">🔍</span>浏览仓库</a>' +
+            '  <a href="/issues?type=your_repositories"><span class="icon">📋</span>我的 Issues</a>' +
+            '  <a href="/-/admin" id="xart-admin-link"><span class="icon">⚙</span>管理面板</a>' +
+            '  <a href="#" onclick="xartShowShortcuts();return false"><span class="icon">⌨</span>快捷键</a>' +
+            '</div>' +
+            '<button class="fab-btn" title="快捷操作">⚡</button>';
+        document.body.appendChild(fab);
+
+        var btn = fab.querySelector('.fab-btn');
+        var menu = fab.querySelector('.fab-menu');
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            menu.classList.toggle('open');
+        });
+        document.addEventListener('click', function() { menu.classList.remove('open'); });
+    }
+
+    // ─── [4] Explore 页热门 Topics ───
+    function injectHotTopics() {
+        if (!p.startsWith('/explore')) return;
+        var container = document.querySelector('.page-content .ui.container');
+        if (!container) return;
+
+        fetch(GITEA_URL + '/api/v1/topics/search?limit=20', {
+            headers: { 'Accept': 'application/json' }
+        }).then(function(r){ return r.json(); }).then(function(d) {
+            var topics = d.topics || d || [];
+            if (!topics.length) return;
+            var div = document.createElement('div');
+            div.id = 'xart-hot-topics';
+            topics.slice(0, 15).forEach(function(t) {
+                var name = t.name || t;
+                var a = document.createElement('a');
+                a.className = 'xart-topic-tag';
+                a.href = '/explore/repos?q=&topic=1&tag=' + encodeURIComponent(name);
+                a.textContent = '#' + name;
+                div.appendChild(a);
+            });
+            var h = container.querySelector('h4, .explore-header, .ui.header');
+            if (h) h.parentElement.insertBefore(div, h.nextSibling);
+            else container.insertBefore(div, container.firstChild);
+        }).catch(function(){});
+    }
+
+    // ─── [5] Repo 列表活跃度指示条 ───
+    function injectActivityBars() {
+        var cards = document.querySelectorAll('.repository-item, .flex-item');
+        if (!cards.length) return;
+        var now = Date.now();
+        cards.forEach(function(card) {
+            var timeEl = card.querySelector('relative-time, time');
+            if (!timeEl) return;
+            var dt = new Date(timeEl.getAttribute('datetime') || timeEl.textContent);
+            var days = Math.max(0, (now - dt.getTime()) / 86400000);
+            var pct = Math.max(5, Math.min(100, 100 - days * 2));
+            var bar = document.createElement('div');
+            bar.className = 'xart-activity-bar';
+            bar.innerHTML = '<div class="fill" style="width:' + pct + '%"></div>';
+            card.appendChild(bar);
+        });
+    }
+
+    // ─── [6] 键盘快捷键 ───
+    window.xartShowShortcuts = function() {
+        var m = document.getElementById('xart-shortcuts-modal');
+        if (m) { m.classList.toggle('open'); return; }
+        m = document.createElement('div');
+        m.id = 'xart-shortcuts-modal';
+        m.className = 'open';
+        m.innerHTML =
+            '<div class="modal-content">' +
+            '<h3>⌨ 快捷键</h3>' +
+            '<div class="shortcut-row"><span>打开快捷键面板</span><kbd>?</kbd></div>' +
+            '<div class="shortcut-row"><span>新建仓库</span><kbd>Shift+N</kbd></div>' +
+            '<div class="shortcut-row"><span>搜索</span><kbd>/</kbd></div>' +
+            '<div class="shortcut-row"><span>浏览仓库</span><kbd>G then E</kbd></div>' +
+            '<div class="shortcut-row"><span>我的 Issues</span><kbd>G then I</kbd></div>' +
+            '<div class="shortcut-row"><span>管理面板</span><kbd>G then A</kbd></div>' +
+            '<div class="shortcut-row"><span>关闭弹窗</span><kbd>Esc</kbd></div>' +
+            '</div>';
+        m.addEventListener('click', function(e) {
+            if (e.target === m) m.classList.remove('open');
+        });
+        document.body.appendChild(m);
+    };
+
+    var gPending = false;
+    document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+
+        if (e.key === '?') { xartShowShortcuts(); return; }
+        if (e.key === 'Escape') {
+            var m = document.getElementById('xart-shortcuts-modal');
+            if (m) m.classList.remove('open');
+            var fab = document.querySelector('#xart-fab .fab-menu');
+            if (fab) fab.classList.remove('open');
+            return;
         }
-        initRipple();
-        loadTab();
-        loadSegmentEnd();
-        initCustomFooter();
-        initDynamicTitle();
+        if (e.key === 'N' && e.shiftKey) { window.location.href = '/repo/create'; return; }
+
+        if (e.key === 'g' || e.key === 'G') { gPending = true; setTimeout(function(){ gPending = false; }, 800); return; }
+        if (gPending) {
+            gPending = false;
+            if (e.key === 'e') window.location.href = '/explore/repos';
+            else if (e.key === 'i') window.location.href = '/issues?type=your_repositories';
+            else if (e.key === 'a') window.location.href = '/-/admin';
+        }
+    });
+
+    // ─── [7] Repo 页文件大小人性化 ───
+    function enhanceFileSizes() {
+        if (!p.match(/^\/[^/]+\/[^/]+\/?$/)) return;
+        // Gitea 默认已经做了，跳过
+    }
+
+    // ─── [8] 看板快捷入口 ───
+    function injectKanbanHint() {
+        if (!p.match(/^\/[^/]+\/[^/]+\/issues\/?$/)) return;
+        var header = document.querySelector('.list-header, .issue-list-header, .flex-list .flex-item:first-child');
+        if (!header) return;
+        var repoPath = p.replace(/\/issues\/?$/, '');
+        var btn = document.createElement('a');
+        btn.href = repoPath + '/projects';
+        btn.className = 'xart-topic-tag';
+        btn.style.marginLeft = '8px';
+        btn.textContent = '📋 看板视图';
+        var actionBar = document.querySelector('.issue-actions, .list-header-toggle');
+        if (actionBar) actionBar.appendChild(btn);
+    }
+
+    // ─── Init ───
+    document.addEventListener('DOMContentLoaded', function() {
+        injectAnnounce();
+        injectRepoStats();
+        injectFAB();
+        injectHotTopics();
+        injectActivityBars();
+        injectKanbanHint();
     });
 })();
 </script>
-<script src="https://fastly.jsdelivr.net/npm/live2d-widgets@0/autoload.js"></script>
+
+<!-- ============================================================
+     Liquid Glass v6 — V4 增量层，不动上面任何代码
+     ============================================================ -->
+<style>
+/* Navbar — 磨砂 */
+html[data-theme] #navbar {
+  background: rgba(13,17,23,0.55) !important;
+  backdrop-filter: blur(24px) saturate(180%) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.1) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 4px 24px rgba(0,0,0,0.4) !important;
+}
+
+/* 内页 — .ui.segment / .ui.card 基础玻璃 */
+html[data-theme] .ui.segment:not(.active),
+html[data-theme] .ui.attached.segment,
+html[data-theme] .ui.card,
+html[data-theme] .ui.cards > .card {
+  background: rgba(255,255,255,0.04) !important;
+  backdrop-filter: blur(16px) saturate(160%) brightness(1.04) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) brightness(1.04) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 14px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 4px 20px rgba(0,0,0,0.25) !important;
+}
+
+/* Dropdown 菜单 */
+html[data-theme] .ui.dropdown .menu,
+html[data-theme] .tippy-box,
+html[data-theme] .ui.popup {
+  background: rgba(13,17,23,0.85) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5) !important;
+}
+
+/* 减弱动画 */
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme] .page-content.home .eight.wide.center.column:hover { transform: none !important; }
+}
+
+/* 不支持 backdrop-filter */
+@supports not (backdrop-filter: blur(1px)) {
+  html[data-theme] .page-content.home .eight.wide.center.column,
+  html[data-theme] .ui.segment,
+  html[data-theme] #navbar {
+    background: rgba(20,20,30,0.85) !important;
+  }
+}
+</style>
+
+<script>
+/* Liquid Glass v6 — 棱镜边框 + 鼠标光泽 */
+(function() {
+    'use strict';
+    var SEL = '.ui.segment, .ui.card, .ui.cards > .card';
+
+    /* 棱镜折射边框 + 高光层 */
+    function initPrism() {
+        document.querySelectorAll(SEL).forEach(function(panel) {
+            if (panel.querySelector('.lg-prism')) return;
+            panel.style.position = 'relative';
+
+            var prism = document.createElement('div');
+            prism.className = 'lg-prism';
+            prism.style.cssText = 'position:absolute;inset:-1px;border-radius:21px;padding:1px;' +
+                'background:conic-gradient(from 0deg,' +
+                'rgba(139,92,246,0),rgba(59,130,246,0.6),rgba(16,185,129,0.4),' +
+                'rgba(251,191,36,0.5),rgba(239,68,68,0.4),rgba(167,139,250,0.6),rgba(139,92,246,0));' +
+                '-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);' +
+                '-webkit-mask-composite:xor;mask-composite:exclude;' +
+                'opacity:0;pointer-events:none;z-index:3;transition:opacity 0.4s ease;';
+            panel.appendChild(prism);
+
+            var hl = document.createElement('div');
+            hl.style.cssText = 'position:absolute;inset:0;border-radius:20px;' +
+                'background:linear-gradient(145deg,rgba(255,255,255,0.06) 0%,transparent 40%);' +
+                'pointer-events:none;z-index:1;';
+            panel.appendChild(hl);
+
+            panel.addEventListener('mouseenter', function() { prism.style.opacity = '1'; });
+            panel.addEventListener('mouseleave', function() { prism.style.opacity = '0'; });
+        });
+    }
+
+    /* 鼠标跟踪光泽 */
+    function initSheen() {
+        var panels = document.querySelectorAll(SEL);
+        panels.forEach(function(panel) {
+            if (panel.querySelector('.lg-sheen')) return;
+            var sheen = document.createElement('div');
+            sheen.className = 'lg-sheen';
+            sheen.style.cssText = 'position:absolute;inset:0;border-radius:20px;pointer-events:none;z-index:2;' +
+                'background:radial-gradient(600px 400px at 50% -30%,rgba(255,255,255,0.10),transparent 65%);' +
+                'opacity:0;transition:opacity 0.3s ease;';
+            panel.style.position = 'relative';
+            panel.appendChild(sheen);
+            panel.addEventListener('mouseenter', function() { sheen.style.opacity = '1'; });
+            panel.addEventListener('mouseleave', function() { sheen.style.opacity = '0'; });
+        });
+
+        var raf = false;
+        document.addEventListener('mousemove', function(e) {
+            if (raf) return;
+            raf = true;
+            requestAnimationFrame(function() {
+                panels.forEach(function(panel) {
+                    var s = panel.querySelector('.lg-sheen');
+                    if (!s) return;
+                    var r = panel.getBoundingClientRect();
+                    if (r.bottom < -100 || r.top > window.innerHeight + 100) return;
+                    var x = ((e.clientX - r.left) / r.width * 100).toFixed(1);
+                    var y = ((e.clientY - r.top) / r.height * 100).toFixed(1);
+                    s.style.background = 'radial-gradient(600px 400px at ' + x + '% ' + y + '%,rgba(255,255,255,0.12),transparent 65%)';
+                });
+                raf = false;
+            });
+        });
+    }
+
+    /* Navbar 滚动增强 */
+    function initNavScroll() {
+        var nav = document.getElementById('navbar');
+        if (!nav) return;
+        var tick = false;
+        window.addEventListener('scroll', function() {
+            if (tick) return;
+            tick = true;
+            requestAnimationFrame(function() {
+                var s = Math.min(window.scrollY / 200, 1);
+                nav.style.backdropFilter = 'blur(' + (24 + s * 12) + 'px) saturate(180%) brightness(1.1)';
+                nav.style.webkitBackdropFilter = nav.style.backdropFilter;
+                tick = false;
+            });
+        });
+    }
+
+    function init() {
+        initPrism();
+        initSheen();
+        initNavScroll();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>

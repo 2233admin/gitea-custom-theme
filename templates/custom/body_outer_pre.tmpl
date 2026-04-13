@@ -2,3 +2,12 @@
 <canvas id="xart-particles"></canvas>
 <div class="xart-scanline"></div>
 <div id="xart-loader" style="width:0%"></div>
+<script>
+// 立即执行：在 body 渲染早期就加 class，不等 DOMContentLoaded
+(function(){
+    var p = window.location.pathname;
+    if (p === '/' || p === '/user/login' || p === '/user/sign_up' || p === '/user/forgot_password') {
+        document.body.classList.add('xart-login-page');
+    }
+})();
+</script>

@@ -1,118 +1,71 @@
-<!-- XART Liquid Glass + Arknights effects -->
+<!-- XART Liquid Glass — login page only, v4 -->
 <style>
-/* 粒子画布 */
-#xart-particles {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: -1;
-    opacity: 0.3;
-}
-
-/* 背景轮播 — 仅登录页显示 */
-#xart-bg-slideshow {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: -2;
-    background-size: cover;
-    background-position: center;
-    transition: opacity 1.5s ease;
+/* === 容器默认隐藏 === */
+#xart-particles, #xart-bg-slideshow, .xart-scanline {
     display: none;
 }
+
+/* === 加载条（全站） === */
+#xart-loader {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, #00b4ff, #00ffea, #ff0040);
+    z-index: 10000; transition: width 0.3s;
+    box-shadow: 0 0 8px rgba(0,180,255,0.8);
+}
+
+/* === 涟漪（全站轻量） === */
+.xart-ripple {
+    position: fixed;
+    border: 2px solid rgba(0,180,255,0.6);
+    border-radius: 50%; pointer-events: none; z-index: 9999;
+    animation: xart-ripple-expand 0.6s ease-out forwards;
+}
+@keyframes xart-ripple-expand {
+    0% { width: 0; height: 0; opacity: 1; }
+    100% { width: 60px; height: 60px; opacity: 0; margin-top: -30px; margin-left: -30px; }
+}
+
+/* ============================================
+   登录页专属 — body.xart-login-page
+   ============================================ */
+
+body.xart-login-page {
+    background-color: #0a0a0f !important;
+}
+
+/* 粒子画布 */
+body.xart-login-page #xart-particles {
+    display: block;
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 1;
+    opacity: 0.5;
+}
+
+/* 背景轮播 */
 body.xart-login-page #xart-bg-slideshow {
     display: block;
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    background-size: cover; background-position: center;
+    transition: opacity 1.5s ease;
     filter: blur(6px) brightness(0.65);
     transform: scale(1.05);
 }
-#xart-bg-slideshow::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+body.xart-login-page #xart-bg-slideshow::after {
+    content: ''; position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.15);
 }
 
-/* Apple 液态玻璃 */
-.liquid-glass,
-.ui.segment,
-.ui.attached.segment,
-.repository .repo-header,
-.dashboard .secondary-nav,
-.ui.card,
-.ui.cards > .card,
-.page-content .markup,
-#navbar {
-    background: rgba(255, 255, 255, 0.08) !important;
-    backdrop-filter: blur(16px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    border-radius: 16px !important;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-}
-
-/* 暗色主题液态玻璃调整 */
-[data-theme*="dark"] .liquid-glass,
-[data-theme*="dark"] .ui.segment,
-[data-theme*="dark"] .ui.attached.segment,
-[data-theme*="dark"] .ui.card,
-[data-theme*="dark"] .ui.cards > .card,
-[data-theme*="dark"] #navbar {
-    background: rgba(0, 0, 0, 0.25) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
-}
-
-/* 液态玻璃高光 */
-.ui.segment::before,
-.ui.card::before,
-#navbar::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    right: 0; height: 1px;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(255,255,255,0.4),
-        transparent);
-    border-radius: 16px 16px 0 0;
-    pointer-events: none;
-}
-
-/* 导航栏透明 */
-#navbar {
-    background: rgba(255, 255, 255, 0.08) !important;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
-}
-
-/* 输入框玻璃效果 */
-.ui.input > input,
-.ui.form textarea,
-.ui.form input {
-    background: rgba(255,255,255,0.06) !important;
-    backdrop-filter: blur(8px) !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-    border-radius: 12px !important;
-}
-
-/* 按钮液态玻璃 */
-.ui.primary.button {
-    backdrop-filter: blur(8px) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 16px rgba(31,38,135,0.2) !important;
-}
-
 /* 扫描线 */
-.xart-scanline {
-    position: fixed;
-    top: 0; left: 0;
+body.xart-login-page .xart-scanline {
+    display: block;
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 2px;
     background: linear-gradient(90deg, transparent, rgba(0,180,255,0.6), transparent);
-    z-index: 9998;
-    pointer-events: none;
+    z-index: 9998; pointer-events: none;
     animation: xart-scan 8s linear infinite;
     opacity: 0.4;
 }
@@ -121,10 +74,135 @@ body.xart-login-page #xart-bg-slideshow {
     100% { top: 100vh; }
 }
 
-/* 文字故障效果 */
-.repository-item .repo-title a:hover,
-.dashboard-repos .item a.name:hover,
-a.muted:hover {
+/* 登录页内容层 — 透明背景让轮播图透出 */
+body.xart-login-page .full.height,
+body.xart-login-page .page-content,
+body.xart-login-page .landing,
+body.xart-login-page .home,
+body.xart-login-page .page-content > .ui.container {
+    background: transparent !important;
+    position: relative;
+    z-index: 2;
+}
+
+/* 打掉主题给 body 加的不透明背景 */
+body.xart-login-page {
+    background: transparent !important;
+    background-color: #0a0a0f !important;
+}
+
+/* footer 也透明 */
+body.xart-login-page footer {
+    background: transparent !important;
+}
+
+/* 液态玻璃登录框 */
+body.xart-login-page .ui.segment,
+body.xart-login-page .ui.attached.segment {
+    background: rgba(20, 20, 30, 0.75) !important;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 登录页导航栏 */
+body.xart-login-page .ui.secondary.menu,
+body.xart-login-page nav {
+    position: relative;
+    z-index: 3;
+    background: rgba(20, 20, 30, 0.6) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* 登录页输入框 — 确保可见 */
+body.xart-login-page .ui.form input[type="text"],
+body.xart-login-page .ui.form input[type="password"],
+body.xart-login-page .ui.form input[type="email"] {
+    background: rgba(255,255,255,0.1) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    border-radius: 8px !important;
+    color: #fff !important;
+}
+body.xart-login-page .ui.form input::placeholder {
+    color: rgba(255,255,255,0.5) !important;
+}
+
+/* 登录页按钮 */
+body.xart-login-page .ui.primary.button {
+    border-radius: 8px !important;
+    box-shadow: 0 4px 16px rgba(31,38,135,0.3) !important;
+}
+
+/* 登录页文字颜色确保可见 */
+body.xart-login-page .ui.segment label,
+body.xart-login-page .ui.segment .field > label,
+body.xart-login-page .ui.segment a,
+body.xart-login-page .ui.header,
+body.xart-login-page h4,
+body.xart-login-page p {
+    color: rgba(255,255,255,0.9) !important;
+}
+
+/* ============================================
+   首页 Hero — AK 风格大标题
+   ============================================ */
+body.xart-login-page .hero h1.header.title {
+    font-size: 4rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 6px !important;
+    text-transform: uppercase;
+    color: #fff !important;
+    text-shadow: 0 0 20px rgba(0,180,255,0.6),
+                 0 0 60px rgba(0,180,255,0.2),
+                 2px 2px 0 rgba(199,21,30,0.4);
+    font-family: 'Segoe UI', 'Noto Sans SC', sans-serif;
+    margin-bottom: 0.2em !important;
+}
+
+body.xart-login-page .hero h2 {
+    font-size: 1.3rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 3px !important;
+    color: rgba(0,180,255,0.85) !important;
+    text-shadow: 0 0 12px rgba(0,180,255,0.3);
+    font-family: 'Noto Sans SC', 'Segoe UI', sans-serif;
+}
+
+/* 首页功能卡片 — 玻璃 + 悬浮 */
+body.xart-login-page .landing .flex-text-block {
+    background: rgba(20, 20, 30, 0.6) !important;
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+    padding: 1.5em !important;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+body.xart-login-page .landing .flex-text-block:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,180,255,0.15);
+    border-color: rgba(0,180,255,0.3) !important;
+}
+
+/* 功能卡片标题 */
+body.xart-login-page .landing .flex-text-block h1.hero {
+    color: #00b4ff !important;
+    font-size: 1.1rem !important;
+}
+
+/* 功能卡片文字 */
+body.xart-login-page .landing .flex-text-block p {
+    color: rgba(255,255,255,0.7) !important;
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+}
+
+/* 文字故障悬浮 — 首页链接 */
+body.xart-login-page a:hover {
     animation: xart-glitch 0.3s ease;
 }
 @keyframes xart-glitch {
@@ -134,46 +212,5 @@ a.muted:hover {
     60% { transform: translate(-1px, 2px); }
     80% { transform: translate(1px, -2px); }
     100% { transform: translate(0); text-shadow: none; }
-}
-
-/* 鼠标点击涟漪 */
-.xart-ripple {
-    position: fixed;
-    border: 2px solid rgba(0,180,255,0.6);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    animation: xart-ripple-expand 0.6s ease-out forwards;
-}
-@keyframes xart-ripple-expand {
-    0% { width: 0; height: 0; opacity: 1; }
-    100% { width: 60px; height: 60px; opacity: 0; margin-top: -30px; margin-left: -30px; }
-}
-
-/* 加载进度条 */
-#xart-loader {
-    position: fixed;
-    top: 0; left: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #00b4ff, #00ffea, #ff0040);
-    z-index: 10000;
-    transition: width 0.3s;
-    box-shadow: 0 0 8px rgba(0,180,255,0.8);
-}
-
-/* 页面整体 — 登录页深色背景，内页跟随主题 */
-body.xart-login-page {
-    background-color: #0a0a0f !important;
-}
-
-/* 登录页粒子更亮 */
-body.xart-login-page #xart-particles {
-    opacity: 0.5;
-}
-
-/* 内页隐藏粒子和扫描线 */
-body:not(.xart-login-page) #xart-particles,
-body:not(.xart-login-page) .xart-scanline {
-    display: none;
 }
 </style>
